@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { userSignUP } from "../features/auth/authApiSlice";
+import { createToast } from "../utils/toast";
+import { setMessageEmpty } from "../features/auth/authSlice";
 
 
 export default function SignUp() {
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { error, message, loader, tag } = useSelector((state) => state.auth);
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [input, setInput] = useState({
     username: "",
     email: "",
@@ -23,28 +29,42 @@ export default function SignUp() {
   // user sign up
   const handleUserSignUp = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const res = await fetch("/api/v1/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(input),
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        setError(error.message);
-        setLoading(false);
-        return;
-      }
-      setLoading(false);
-      navigate('/sign-in')
-    } catch (error) {
-      setLoading(false);
-      setError(error.message);
-    }
+    dispatch(userSignUP(input))
+   
+    // try {
+    //   setLoading(true);
+    //   const res = await fetch("/api/v1/auth/signup", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(input),
+    //   });
+    //   const data = await res.json();
+    //   setLoading(false);
+    //   navigate('/sign-in')
+    //   if (data.success === false) {
+    //     setError(error.message);
+    //     setLoading(false);
+    //     return;
+    //   }
+    // } catch (error) {
+    //   setLoading(false);
+    //   setError(error.message);
+    // }
   };
+
+    // for message manage
+    useEffect(() => {
+      if (error) {
+        createToast(error);
+        dispatch(setMessageEmpty());
+      }
+      if (message) {
+        createToast(message, "success");
+        dispatch(setMessageEmpty());
+      }
+    }, [error, message, dispatch]);
 
   return (
     <div className="w-full">
@@ -78,10 +98,10 @@ export default function SignUp() {
             />
             <button
               type="submit"
-              disabled={loading}
+              disabled={loader}
               className="bg-slate-900 text-white uppercase p-3 rounded-lg hover:bg-opacity-95 "
             >
-              {loading ? "Loading.." : " Sign Up"}
+              {loader ? "Loading.." : " Sign Up"}
             </button>
             <button
               type="submit"
@@ -97,7 +117,6 @@ export default function SignUp() {
               Sign in{" "}
             </Link>
           </p>
-          {error && <p className="text-red-500">{error.message}</p>}
         </div>
       </div>
     </div>

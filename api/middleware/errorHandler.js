@@ -1,5 +1,4 @@
 // custom error handler
-
 const errorHandler = ( error, req, res, next ) => {
 
     const errorStatus = error.status || 500;
