@@ -10,7 +10,7 @@ export default function Header() {
                 <span className="text-slate-700">Estate </span>
             </div>
             <form className="flex bg-slate-100 justify-between items-center p-3 rounded-lg ">
-                <input type="text"  placeholder="Search..." className="bg-transparent outline-none w-32 sm:w-64"/>
+                <input type="text"  placeholder="Search..." className="bg-transparent outline-none w-32 sm:w-60"/>
                 <BsSearchHeart className="cursor-pointer"/>
             </form>
             <div>
