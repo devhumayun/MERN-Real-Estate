@@ -1,36 +1,87 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 
 export default function SignUp() {
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
+  const [input, setInput] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  // handle input value change
+  const handleInputChange = (e) => {
+    setInput((preState) => ({
+      ...preState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // user sign up
+  const handleUserSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await fetch("/api/v1/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(input),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+      setLoading(false);
+      navigate('/sign-in')
+    } catch (error) {
+      setLoading(false);
+      setError(error.message);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="">
         <div className="max-w-lg mx-auto py-7 px-4 mt-5">
           <h1 className="text-center text-3xl font-semibold mb-4"> Sign Up </h1>
-          <form className="flex flex-col gap-4">
+          <form onSubmit={handleUserSignUp} className="flex flex-col gap-4">
             <input
               type="text"
+              value={input.username}
+              onChange={(e) => handleInputChange(e)}
               name="username"
               placeholder="username"
               className="p-3 w-full rounded-lg bg-white focus:outline-none"
             />
             <input
-              type="text"
+              type="email"
+              value={input.email}
+              onChange={(e) => handleInputChange(e)}
               name="email"
               placeholder="email"
               className="p-3 w-full rounded-lg bg-white focus:outline-none"
             />
             <input
               type="text"
+              value={input.password}
+              onChange={(e) => handleInputChange(e)}
               name="password"
               placeholder="password"
               className="p-3 w-full rounded-lg bg-white focus:outline-none"
             />
             <button
               type="submit"
+              disabled={loading}
               className="bg-slate-900 text-white uppercase p-3 rounded-lg hover:bg-opacity-95 "
             >
-              Sign Up
+              {loading ? "Loading.." : " Sign Up"}
             </button>
             <button
               type="submit"
@@ -41,8 +92,12 @@ export default function SignUp() {
           </form>
           <p className="mt-5 ">
             Have an account?
-            <Link to="/sign-in" className="font-semibold text-blue-500"> Sign in </Link>
+            <Link to="/sign-in" className="font-semibold text-blue-500">
+              {" "}
+              Sign in{" "}
+            </Link>
           </p>
+          {error && <p className="text-red-500">{error.message}</p>}
         </div>
       </div>
     </div>

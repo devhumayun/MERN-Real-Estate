@@ -3,11 +3,12 @@
 const errorHandler = ( error, req, res, next ) => {
 
     const errorStatus = error.status || 500;
-    const errorMsg = error.message || 'Unknown error'
+    const message = error.message || 'Internal server error'
 
     res.status(errorStatus).json({
-        messeage : errorMsg,
-        status : errorStatus,
+        success: false,
+        message,
+        errorStatus,
         stack : error.stack
     })
 
