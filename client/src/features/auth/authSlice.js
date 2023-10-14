@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getLoggedInUser, loginUser, logoutUser, userSignUP } from "./authApiSlice";
+import { userSignIn, userSignUP } from "./authApiSlice";
 
 
 // create a auth slice
@@ -24,27 +24,12 @@ const authSlice = createSlice({
         .addCase(userSignUP.fulfilled, (state,action) => {
             state.message = action.payload.message
         })
-        .addCase(loginUser.rejected, (state, action) => {
+        .addCase(userSignIn.rejected, (state, action) => {
             state.error = action.error.message
         })
-        .addCase(loginUser.fulfilled, (state,action) => {
+        .addCase(userSignIn.fulfilled, (state,action) => {
             state.message = action.payload.message
             state.user = action.payload.user
-            localStorage.setItem("user", JSON.stringify(action.payload.user))
-        })
-        .addCase(logoutUser.rejected, (state, action) => {
-            state.error = action.error.message
-        })
-        .addCase(logoutUser.fulfilled, (state,action) => {
-            state.message = action.payload.message
-            state.user = null
-            localStorage.removeItem("user")
-        })
-        .addCase(getLoggedInUser.rejected, (state, action) => {
-            state.error = action.error.message
-        })
-        .addCase(getLoggedInUser.fulfilled, (state,action) => {
-            state.user = action.payload
         })
 
     }

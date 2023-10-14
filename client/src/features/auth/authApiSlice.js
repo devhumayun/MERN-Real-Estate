@@ -15,11 +15,10 @@ export const userSignUP = createAsyncThunk("auth/userSignUP", async(data) => {
     }
 })
 
-
-// user registration
-export const loginUser = createAsyncThunk("auth/loginUser", async(data) => {
+// user sign in
+export const userSignIn = createAsyncThunk("auth/userSignIn", async(data) => {
     try {
-        const response = await axios.post(`http://localhost:8080/api/v1/auth/login`, data, {
+        const response = await axios.post(`/api/v1/auth/sign-in`, data, {
             withCredentials: true
         })
 
