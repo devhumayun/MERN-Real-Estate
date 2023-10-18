@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
   const [input, setInput] = useState({
     username: "",
     email: "",
@@ -23,7 +24,7 @@ export default function SignUp() {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await fetch("/api/v1/auth/signup", {
+      const res = await fetch("/api/v1/auth/sign-up", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,9 +38,11 @@ export default function SignUp() {
         setLoading(false);
         return;
       }
+      setError(null)
+      navigate("/sign-in")
     } catch (error) {
       setLoading(false);
-      // setError(error.message)
+      setError(error.message)
     }
   };
 

@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { userSignIn, userSignUP } from "../features/auth/authApiSlice";
-import { createToast } from "../utils/toast";
-import { setMessageEmpty } from "../features/auth/authSlice";
 
 
 export default function SignIn() {
 
-  const { error, message, loader, } = useSelector((state) => state.auth);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
-  const dispatch = useDispatch()
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -27,25 +24,29 @@ export default function SignIn() {
   // user sign in
   const handleUserSignIn = async (e) => {
     e.preventDefault();
-    dispatch(userSignIn(input))
-    setInput({
-      email: "",
-      password: "",
-    })
-    navigate("/")
+    try {
+      setLoading(true);
+      const res = await fetch("/api/v1/auth/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(input),
+      });
+      const data = await res.json();
+      setLoading(false);
+      if (data.success === false) {
+        setError(data.message);
+        setLoading(false);
+        return;
+      }
+      setError(null)
+      navigate("/home")
+    } catch (error) {
+      setLoading(false);
+      setError(error.message)
+    }
   };
-
-    // for message manage
-    useEffect(() => {
-      if (error) {
-        createToast(error);
-        dispatch(setMessageEmpty());
-      }
-      if (message) {
-        createToast(message, "success");
-        dispatch(setMessageEmpty());
-      }
-    }, [error, message, dispatch]);
 
   return (
     <div className="w-full">
@@ -69,12 +70,13 @@ export default function SignIn() {
               placeholder="password"
               className="p-3 w-full rounded-lg bg-white focus:outline-none"
             />
+             {error && <p className="text-red-500 py-3">{error}</p>}
             <button
               type="submit"
-              disabled={loader}
+              disabled={loading}
               className="bg-slate-900 text-white uppercase p-3 rounded-lg hover:bg-opacity-95 "
             >
-              {loader ? "Loading.." : " Sign Up"}
+              {loading ? "Loading.." : " Sign Up"}
             </button>
             <button
               type="submit"
