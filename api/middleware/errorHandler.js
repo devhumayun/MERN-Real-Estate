@@ -1,14 +1,13 @@
 // custom error handler
-const errorHandler = ( error, req, res, next ) => {
+const errorHandler = ( err, req, res, next ) => {
 
-    const errorStatus = error.status || 500;
-    const message = error.message || 'Internal server error'
+    const errStatus = err.status || 500;
+    const message = err.message || 'Internal server error'
 
-    res.status(errorStatus).json({
+    res.status(errStatus).json({
         success: false,
         message,
-        errorStatus,
-        stack : error.stack
+        errStatus,
     })
 
 };

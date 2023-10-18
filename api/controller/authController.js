@@ -1,45 +1,36 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { createError } from "../utils/createError.js";
 
 // user signup
 export const signUp = async (req, res, next) => {
+  const {username, email, password} = req.body
+  const haspass = bcrypt.hashSync(password, 10)
   try {
-    // get body data
-    const { username, email, password } = req.body;
+    const newUser = new User({username, email, password:haspass})
 
-    // validate input fields
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: "All fields are requried" });
-    }
-
-    // check username is exists
-    const userNameCheck = await User.findOne({ username });
-    if (userNameCheck) {
-      return res
-        .status(400)
-        .json({
-          message: "User exists with this username! Try another username",
-        });
+    // check  username is exists
+    const checkUsername = await User.findOne({username})
+    if(checkUsername){
+      next(createError(400, "Username exists. Try another username"))
     }
 
     // check email is exists
-    const userEmail = await User.findOne({ email });
-
-    if (userEmail) {
-      return res.status(400).json({ message: "Email already exists" });
+    const checkemail = await User.findOne({email})
+    if(checkemail){
+      next(createError(400, "Email exists. Try another email"))
     }
+    await newUser.save()
 
-    // hash password
-    const hash_pass = await bcrypt.hash(password, 10);
 
-    // create user
-    const user = await User.create({ username, email, password: hash_pass });
-    res.status(200).json({ user, message: "User created successfull" });
+    res.status(201).json({newUser, message: "User Registration Successfull"})
   } catch (error) {
-    next(error);
+    next(error)
+    console.log(error);
   }
 };
+
 
 // user login
 export const signIn = async (req, res) => {
