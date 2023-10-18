@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {signInStart, signInSuccess, signInFailed} from '../redux//user/userSlice.js'
+import Oath from "../component/Oath.jsx";
 
 
 export default function SignIn() {
@@ -76,12 +77,7 @@ export default function SignIn() {
             >
               {loading ? "Loading.." : " Sign Up"}
             </button>
-            <button
-              type="submit"
-              className="bg-blue-700 text-white uppercase p-3 rounded-lg hover:bg-opacity-95 "
-            >
-              Continue With Google
-            </button>
+            <Oath />
           </form>
           <p className="mt-5 ">
             Not Have an account?

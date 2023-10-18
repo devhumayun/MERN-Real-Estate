@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import {BsSearchHeart} from 'react-icons/bs'
+import {useSelector} from 'react-redux'
+
 export default function Header() {
+  const {curentUser} = useSelector(state => state.user)
   return (
     <>
       <div className='w-full shadow-lg bg-gray-300 bg-opacity-90'>
@@ -14,10 +17,15 @@ export default function Header() {
                 <BsSearchHeart className="cursor-pointer"/>
             </form>
             <div>
-                <ul className="flex gap-5 text-slate-700 font-semibold">
+                <ul className="flex justify-center items-center gap-5 text-slate-700 font-semibold">
                     <li className="hidden sm:inline hover:underline hover:cursor-pointer "><Link to="/"> Home </Link></li>
                     <li className="hidden sm:inline hover:underline hover:cursor-pointer "><Link to="/about"> About </Link></li>
-                    <li><Link to="/sign-in"> Sign In </Link></li>
+                    {
+                      curentUser ? <Link to="/profile">
+                        <img className="w-10 h-10 rounded-full object-cover cursor-pointer" src="https://www.nj.com/resizer/zovGSasCaR41h_yUGYHXbVTQW2A=/1280x0/smart/cloudfront-us-east-1.images.arcpublishing.com/advancelocal/SJGKVE5UNVESVCW7BBOHKQCZVE.jpg" alt="" /> 
+                      </Link>: 
+                      <li><Link to="/sign-in"> Sign In </Link></li>
+                    }
                 </ul>
             </div>
         </div>

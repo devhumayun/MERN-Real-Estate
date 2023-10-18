@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Oath from "../component/Oath";
 
 export default function SignUp() {
   const [error, setError] = useState(null);
@@ -84,12 +85,7 @@ export default function SignUp() {
             >
               {loading ? "Loading.." : " Sign Up"}
             </button>
-            <button
-              type="submit"
-              className="bg-blue-700 text-white uppercase p-3 rounded-lg hover:bg-opacity-95 "
-            >
-              Continue With Google
-            </button>
+            <Oath />
           </form>
 
           <p className="mt-5 ">
