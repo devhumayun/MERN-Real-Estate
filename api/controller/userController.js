@@ -37,3 +37,21 @@ export const userProfileUpdate = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Delete user
+ */
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    const id = req.params.id
+
+    await User.findByIdAndDelete(id)
+    res.clearCookie("accessToken")
+
+    res.status(200).json("User Delete Successfull")
+
+  } catch (error) {
+    next(error)
+  }
+}

@@ -12,7 +12,7 @@ export const verifyToken = (req, res, next) => {
   if (!verify_token) {
     return next(createError(403, "Invalid Token"));
   } else{
-    req.userId = verify_token.id
+    req.user = verify_token.id
     next()
   }
 

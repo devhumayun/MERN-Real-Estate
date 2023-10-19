@@ -11,6 +11,9 @@ import {
   updateProfileFailed,
   updateProfileStart,
   updateProfileSuccess,
+  userDeleteFailed,
+  userDeleteStart,
+  userDeleteSuccess,
 } from "../redux/user/userSlice";
 
 export default function Profile() {
@@ -83,6 +86,24 @@ export default function Profile() {
     }
   };
 
+  // delete user
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(userDeleteStart())
+      const res = await fetch(`/api/v1/user/delete/${curentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(userDeleteFailed(data.message));
+        return;
+      }
+      dispatch(userDeleteSuccess(data))
+    } catch (error) {
+      dispatch(userDeleteFailed(error.message))
+    }
+  }
+
   return (
     <div className="max-w-lg m-auto">
       <h1 className="text-3xl font-semibold text-center py-8"> Profile </h1>
@@ -143,7 +164,7 @@ export default function Profile() {
         </button>
       </form>
       <div className="mt-7 flex justify-between">
-        <button className="bg-red-900 hover:bg-opacity-90 text-white p-2 uppercase rounded-lg">
+        <button onClick={handleDeleteUser} className="bg-red-900 hover:bg-opacity-90 text-white p-2 uppercase rounded-lg">
           {" "}
           Delete Account{" "}
         </button>
