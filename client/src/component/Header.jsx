@@ -22,7 +22,7 @@ export default function Header() {
                     <li className="hidden sm:inline hover:underline hover:cursor-pointer "><Link to="/about"> About </Link></li>
                     {
                       curentUser ? <Link to="/profile">
-                        <img className="w-10 h-10 rounded-full object-cover cursor-pointer" src="https://www.nj.com/resizer/zovGSasCaR41h_yUGYHXbVTQW2A=/1280x0/smart/cloudfront-us-east-1.images.arcpublishing.com/advancelocal/SJGKVE5UNVESVCW7BBOHKQCZVE.jpg" alt="" /> 
+                        <img className="w-10 h-10 rounded-full object-cover cursor-pointer" src={curentUser.avater? curentUser.avater: "https://www.nj.com/resizer/zovGSasCaR41h_yUGYHXbVTQW2A=/1280x0/smart/cloudfront-us-east-1.images.arcpublishing.com/advancelocal/SJGKVE5UNVESVCW7BBOHKQCZVE.jpg"} alt="" /> 
                       </Link>: 
                       <li><Link to="/sign-in"> Sign In </Link></li>
                     }
