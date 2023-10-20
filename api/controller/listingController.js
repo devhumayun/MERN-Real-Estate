@@ -1,4 +1,11 @@
+import Listing from "../models/listingModel.js"
 
-export const createListing = (req, res, next) => {
-    res.status(200).json("OK")
+export const createListing = async (req, res, next) => {
+    try {
+        const listing = await Listing.create(req.body)
+
+        res.status(201).json(listing)
+    } catch (error) {
+        next(error)
+    }
 }
