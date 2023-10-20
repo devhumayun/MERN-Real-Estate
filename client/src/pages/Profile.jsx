@@ -18,6 +18,7 @@ import {
   userSignOutStartFailed,
   userSignOutStartSuccess,
 } from "../redux/user/userSlice";
+import {Link} from 'react-router-dom'
 
 export default function Profile() {
   const [file, setFile] = useState(undefined);
@@ -181,6 +182,7 @@ export default function Profile() {
         <button className="bg-slate-900 hover:bg-opacity-90 text-white uppercase p-3 rounded-lg font-semibold">
           {loading? "Updating Data" : "Update"}
         </button>
+        <Link to='/create-listing' className="bg-blue-900 text-white uppercase text-center p-3 rounded-lg font-semibold hover:bg-opacity-90"> Create listing </Link>
       </form>
       <div className="mt-7 flex justify-between">
         <button onClick={handleDeleteUser} className="bg-red-900 hover:bg-opacity-90 text-white p-2 uppercase rounded-lg">
