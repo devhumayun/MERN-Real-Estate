@@ -30,5 +30,5 @@ const userSchema = mongoose.Schema({
 });
 
 
-// export default students model
+// export default user model
 export default mongoose.model( 'User', userSchema )

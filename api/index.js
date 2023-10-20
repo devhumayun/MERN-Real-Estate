@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 import authRoute from "./route/authRoute.js";
 import userRouter from './route/userRoute.js'
-// import userRoute from "./route/userRoute.js";
+import listingRouter from './route/listingRoute.js'
 
 
 const app = express();
@@ -18,6 +18,7 @@ app.use(cookieParser())
 // routing
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/listing", listingRouter);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server is runing for ${process.env.SERVER_PORT} port`);
