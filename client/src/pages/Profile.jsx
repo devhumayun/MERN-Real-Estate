@@ -18,14 +18,16 @@ import {
   userSignOutStartFailed,
   userSignOutStartSuccess,
 } from "../redux/user/userSlice";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const [file, setFile] = useState(undefined);
   const [filePercent, setFilePercent] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [input, setInput] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false)
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingError, setShowListingError] = useState(false);
+  const [userListing, setUserListing] = useState([]);
   const dispatch = useDispatch();
   const { curentUser, loading, error } = useSelector((state) => state.user);
 
@@ -84,7 +86,7 @@ export default function Profile() {
         return;
       }
       dispatch(updateProfileSuccess(data));
-      setUpdateSuccess(true)
+      setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateProfileFailed(error));
     }
@@ -93,7 +95,7 @@ export default function Profile() {
   // delete user
   const handleDeleteUser = async () => {
     try {
-      dispatch(userDeleteStart())
+      dispatch(userDeleteStart());
       const res = await fetch(`/api/v1/user/delete/${curentUser._id}`, {
         method: "DELETE",
       });
@@ -102,27 +104,42 @@ export default function Profile() {
         dispatch(userDeleteFailed(data.message));
         return;
       }
-      dispatch(userDeleteSuccess(data))
+      dispatch(userDeleteSuccess(data));
     } catch (error) {
-      dispatch(userDeleteFailed(error.message))
+      dispatch(userDeleteFailed(error.message));
     }
-  }
+  };
 
   // usre sign out
   const handleSignOut = async () => {
     try {
-      dispatch(userSignOutStart)
-      const res = await fetch(`/api/v1/auth/sign-out/${curentUser._id}`)
-      const data = await res.json()
+      dispatch(userSignOutStart);
+      const res = await fetch(`/api/v1/auth/sign-out/${curentUser._id}`);
+      const data = await res.json();
       if (data.success === false) {
         dispatch(userSignOutStartFailed(data.message));
         return;
       }
-      dispatch(userSignOutStartSuccess(data))
+      dispatch(userSignOutStartSuccess(data));
     } catch (error) {
-      dispatch(userSignOutStartFailed(error.message))
+      dispatch(userSignOutStartFailed(error.message));
     }
-  }
+  };
+
+  // show all listing
+  const handleShowListing = async () => {
+    try {
+      setShowListingError(false);
+      const res = await fetch(`/api/v1/user/listing/${curentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setShowListingError(true);
+      }
+      setUserListing(data);
+    } catch (error) {
+      setShowListingError(true);
+    }
+  };
 
   return (
     <div className="max-w-lg m-auto">
@@ -178,21 +195,77 @@ export default function Profile() {
           className="p-3 rounded-lg focus:outline-none"
         />
         {error && <p className="text-red-500 py-3">{error}</p>}
-        {updateSuccess ? <p className="text-green-500 py-3"> Update Successfull </p> : ""}
+        {updateSuccess ? (
+          <p className="text-green-500 py-3"> Update Successfull </p>
+        ) : (
+          ""
+        )}
         <button className="bg-slate-900 hover:bg-opacity-90 text-white uppercase p-3 rounded-lg font-semibold">
-          {loading? "Updating Data" : "Update"}
+          {loading ? "Updating Data" : "Update"}
         </button>
-        <Link to='/create-listing' className="bg-blue-900 text-white uppercase text-center p-3 rounded-lg font-semibold hover:bg-opacity-90"> Create listing </Link>
+        <Link
+          to="/create-listing"
+          className="bg-blue-900 text-white uppercase text-center p-3 rounded-lg font-semibold hover:bg-opacity-90"
+        >
+          {" "}
+          Create listing{" "}
+        </Link>
       </form>
       <div className="mt-7 flex justify-between">
-        <button onClick={handleDeleteUser} className="bg-red-900 hover:bg-opacity-90 text-white p-2 uppercase rounded-lg">
+        <button
+          onClick={handleDeleteUser}
+          className="bg-red-900 hover:bg-opacity-90 text-white p-2 uppercase rounded-lg"
+        >
           {" "}
           Delete Account{" "}
         </button>
-        <button onClick={handleSignOut} className="bg-red-900 hover:bg-opacity-90 text-white p-2 uppercase rounded-lg">
+        <button
+          onClick={handleSignOut}
+          className="bg-red-900 hover:bg-opacity-90 text-white p-2 uppercase rounded-lg"
+        >
           {" "}
           Sign Out{" "}
         </button>
+      </div>
+      <div>
+        <button
+          onClick={handleShowListing}
+          className="w-full my-7 bg-slate-900 p-3 rounded-lg uppercase text-white font-semibold hover:bg-opacity-90"
+        >
+          {" "}
+          Show Listing{" "}
+        </button>
+        {showListingError && (
+          <p className="text-red-700">
+            {showListingError ? "Facing problem to showing listing" : ""}
+          </p>
+        )}
+       
+        {userListing &&
+          userListing.length > 0 &&
+          userListing.map((listing) => {
+            return (
+              <div
+                key={listing._id}
+                className="flex justify-between items-center mb-3 bg-white p-2 rounded-lg"
+              >
+                <div className="flex gap-2 items-center">
+                  <Link to={`/listing/${listing._id}`}>
+                    <img
+                      className="w-32 object-contain"
+                      src={listing.imageUrl[0]}
+                      alt=""
+                    />
+                  </Link>
+                  <Link to={`/listing/${listing._id}`}>{listing.name}</Link>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <button className="bg-red-900 p-1 text-white capitalize rounded-lg"> delete </button>
+                  <button className="bg-blue-900 p-1 text-white capitalize rounded-lg"> Edit </button>
+                </div>
+              </div>
+            );
+          })}
       </div>
     </div>
   );
