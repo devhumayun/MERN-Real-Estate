@@ -1,4 +1,77 @@
+import { useState } from "react";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase";
+
 const CreateListing = () => {
+  const [files, setFile] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [fromData, setFromData] = useState({
+    imageUrl: [],
+  });
+  const [filesUploadError, setFilesUploadError] = useState(null);
+  const handleImageUpload = async () => {
+    if (files.length > 0 && files.length + fromData.imageUrl.length < 7) {
+      setUploading(true);
+      setFilesUploadError(null);
+      const promise = [];
+
+      for (let i = 0; i < files.length; i++) {
+        promise.push(filesStore(files[i]));
+      }
+      Promise.all(promise)
+        .then((urls) => {
+          setFromData({
+            ...fromData,
+            imageUrl: fromData.imageUrl.concat(urls),
+          });
+          setFilesUploadError(null);
+        })
+        .catch((err) => {
+          setFilesUploadError(err, "Max size per image < 2mb");
+          setUploading(false);
+        });
+    } else {
+      setFilesUploadError("Maximum upload limit is 6");
+      setUploading(false);
+    }
+  };
+  const filesStore = async (file) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Uploading ${progress}%`);
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) =>
+            resolve(downloadUrl)
+          );
+        }
+      );
+    });
+  };
+  // Remove uploaded image
+  const handleImageRemove = (index) => {
+    setFromData({
+      ...fromData,
+      imageUrl: fromData.imageUrl.filter((_, i) => i !== index),
+    });
+  };
   return (
     <main className="p-4 max-w-4xl mx-auto">
       <h1 className="text-center py-6 text-3xl font-semibold">
@@ -95,10 +168,13 @@ const CreateListing = () => {
                 required
                 className="p-3 broder-gray-400 rounded-lg outline-none"
               />
-                <div className="">
+              <div className="">
                 <p className="text-md font-semibold"> Regular Price </p>
-              <p className="text-xs font-semibold text-center"> ($ / month) </p>
-                </div>
+                <p className="text-xs font-semibold text-center">
+                  {" "}
+                  ($ / month){" "}
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -110,12 +186,8 @@ const CreateListing = () => {
                 className="p-3 broder-gray-400 rounded-lg outline-none"
               />
               <div>
-                <p className="text-md font-semibold">
-                  Discounted Price
-                </p>
-                <p className="text-xs font-semibold text-center">
-                  ($ / month)
-                </p>
+                <p className="text-md font-semibold">Discounted Price</p>
+                <p className="text-xs font-semibold text-center">($ / month)</p>
               </div>
             </div>
           </div>
@@ -123,13 +195,55 @@ const CreateListing = () => {
         <div className="flex felx-col flex-1">
           <div>
             <p className="text-xl font-semibold mb-5">
-              Images: <span className="font-normal text-sm">The first image will be cover image (max 6)</span>
+              Images:{" "}
+              <span className="font-normal text-sm">
+                The first image will be cover image (max 6)
+              </span>
             </p>
-            <div className="flex gap-2 mb-5" >
-              <input className="bg-white p-3 rounded-lg cursor-pointer" type="file" id="upload" accept="image/*"/>
-              <button className="p-3 border border-green-700 rounded-lg">Upload</button>
+            <div className="flex gap-2 mb-5">
+              <input
+                onChange={(e) => setFile(e.target.files)}
+                className="bg-white p-3 rounded-lg cursor-pointer"
+                type="file"
+                id="upload"
+                accept="image/*"
+                multiple
+              />
+              <button
+                disabled={uploading}
+                onClick={handleImageUpload}
+                type="button"
+                className="p-3 border border-green-700 rounded-lg"
+              >
+                {uploading ? "Uploading..." : "Upload"}
+              </button>
             </div>
-            <button className="text-center bg-slate-900 w-full p-3 text-white uppercase rounded-lg font-semibold"> Create Listing </button>
+            {filesUploadError && (
+              <p className="text-red-600 mb-3"> {filesUploadError} </p>
+            )}
+            {fromData.imageUrl &&
+              fromData.imageUrl.map((url, i) => {
+                return (
+                  <div
+                    key={url}
+                    className="flex p-3 bg-white mb-2 justify-between shadow-sm rounded-lg"
+                  >
+                    <img
+                      className="w-32 h-32 object-cover shadow-lg"
+                      src={url}
+                      alt="listing image"
+                    />
+                    <button onClick={() => handleImageRemove(i)} type="button">
+                      {" "}
+                      Delete{" "}
+                    </button>
+                  </div>
+                );
+              })}
+            <button className="text-center bg-slate-900 w-full p-3 text-white uppercase rounded-lg font-semibold">
+              {" "}
+              Create Listing{" "}
+            </button>
           </div>
         </div>
       </form>
