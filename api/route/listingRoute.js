@@ -5,7 +5,7 @@ import { createListing } from '../controller/listingController.js';
 const router = express.Router();
 
 // user route manage
-router.post("/create/:id", verifyToken, createListing)
+router.post("/create", verifyToken, createListing)
 
 
 export default router
