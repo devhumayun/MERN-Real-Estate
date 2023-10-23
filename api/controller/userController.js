@@ -72,3 +72,19 @@ export const userListing = async (req, res, next) => {
     next(error);
   }
 };
+
+
+/**
+ * get landloard info
+ */
+export const getLandlordUserInfo = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if(!user){
+      return next(createError(404, "User data not found"))
+    }
+    res.status(200).json(user)
+  } catch (error) {
+    next(error)
+  }
+}
