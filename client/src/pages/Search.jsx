@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 
 const Search = () => {
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [listing, setListing] = useState([])
+  console.log(listing);
   const [searchListing, setSearchListing] = useState({
     searchTerm: "",
     offer: false,
@@ -67,6 +70,18 @@ const Search = () => {
             order: searchOrderFromUrl || "desc"
         })
     }
+
+    const fetchListingData = async () => {
+        setLoading(true)
+        const searchQuery = urlParams.toString()
+        const res = await fetch(`/api/v1/listing/get?${searchQuery}`)
+        const data = await res.json()
+        setListing(data)
+        setLoading(false)
+    }
+
+    fetchListingData()
+
   },[location.search])
 
   const handleSearchForm = (e) => {
