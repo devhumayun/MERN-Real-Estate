@@ -13,7 +13,7 @@ const listingSchema = mongoose.Schema({
         type: String,
         requried: true
     },
-    selePrice: {
+    salePrice: {
         type: Number,
         requried: true
     },
