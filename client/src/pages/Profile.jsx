@@ -114,7 +114,7 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(userSignOutStart);
-      const res = await fetch(`/api/v1/auth/sign-out/${curentUser._id}`);
+      const res = await fetch(`/api/v1/auth/sign-out`);
       const data = await res.json();
       if (data.success === false) {
         dispatch(userSignOutStartFailed(data.message));

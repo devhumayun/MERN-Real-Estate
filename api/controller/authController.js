@@ -70,11 +70,19 @@ export const signIn = async (req, res, next) => {
 
 
 //  user sign out
-export const signOut = async (req, res, next) => {
+// export const signOut = async (req, res, next) => {
+//   try {
+//     res.clearCookie("accessToken")
+//     res.status(200).json("Sign out successfull")
+//   } catch (error) {
+//     next(error)
+//   }
+// }
+
+export const signOut = (req, res, next) => {
   try {
     res.clearCookie("accessToken")
-
-    res.status(200).json("Sign out successfull")
+    res.status(200).json("Logout successfull")
   } catch (error) {
     next(error)
   }

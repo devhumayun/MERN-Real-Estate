@@ -6,7 +6,8 @@ const router = express.Router();
 // auth route manage
 router.route('/sign-up').post(signUp)
 router.route('/sign-in').post(signIn)
-router.route('/sign-out').get(signOut)
+router.get('/sign-out', signOut)
+// router.route('/sign-out').get(signOut)
 
 
 export default router
