@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import {useNavigate, useParams} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import ListingItem from "../component/ListingItem";
 
 const Search = () => {
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [listing, setListing] = useState([])
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [listing, setListing] = useState([]);
   console.log(listing);
+  const [showMore, setShowMore] = useState(false);
+
   const [searchListing, setSearchListing] = useState({
     searchTerm: "",
     offer: false,
@@ -52,52 +54,80 @@ const Search = () => {
   };
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search)
-    const searchTermFromUrl = urlParams.get("searchTerm") 
-    const searchTypeFromUrl = urlParams.get("type")
-    const searchOfferFromUrl = urlParams.get("offer")
-    const searchParkingFromUrl = urlParams.get("parking")
-    const searchFurnishedFromUrl = urlParams.get("furnished")
-    const searchSortFromUrl = urlParams.get("sort")
-    const searchOrderFromUrl = urlParams.get("order")
-    if(searchTermFromUrl || searchTypeFromUrl || searchOfferFromUrl || searchParkingFromUrl || searchFurnishedFromUrl || searchSortFromUrl || searchOrderFromUrl){
-        setSearchListing({
-            searchTerm: searchTermFromUrl || "",
-            type : searchTypeFromUrl || "all",
-            offer: searchOfferFromUrl === "true" ? true:false,
-            furnished: searchFurnishedFromUrl === "true"? true:false,
-            parking: searchParkingFromUrl === "true" ? true: false,
-            sort: searchSortFromUrl || "create_at",
-            order: searchOrderFromUrl || "desc"
-        })
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    const searchTypeFromUrl = urlParams.get("type");
+    const searchOfferFromUrl = urlParams.get("offer");
+    const searchParkingFromUrl = urlParams.get("parking");
+    const searchFurnishedFromUrl = urlParams.get("furnished");
+    const searchSortFromUrl = urlParams.get("sort");
+    const searchOrderFromUrl = urlParams.get("order");
+    if (
+      searchTermFromUrl ||
+      searchTypeFromUrl ||
+      searchOfferFromUrl ||
+      searchParkingFromUrl ||
+      searchFurnishedFromUrl ||
+      searchSortFromUrl ||
+      searchOrderFromUrl
+    ) {
+      setSearchListing({
+        searchTerm: searchTermFromUrl || "",
+        type: searchTypeFromUrl || "all",
+        offer: searchOfferFromUrl === "true" ? true : false,
+        furnished: searchFurnishedFromUrl === "true" ? true : false,
+        parking: searchParkingFromUrl === "true" ? true : false,
+        sort: searchSortFromUrl || "create_at",
+        order: searchOrderFromUrl || "desc",
+      });
     }
 
     const fetchListingData = async () => {
-        setLoading(true)
-        const searchQuery = urlParams.toString()
-        const res = await fetch(`/api/v1/listing/get?${searchQuery}`)
-        const data = await res.json()
-        setListing(data)
-        setLoading(false)
+      setLoading(true);
+      setShowMore(false)
+      const searchQuery = urlParams.toString();
+      const res = await fetch(`/api/v1/listing/get?${searchQuery}`);
+      const data = await res.json();
+      if (data.length > 8) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
+      setListing(data);
+      setLoading(false);
+    };
+
+    fetchListingData();
+  }, [location.search]);
+
+  const handleShowMoreListing = async () => {
+    const numberOfListing = listing.length;
+    const startIndex = numberOfListing;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/v1/listing/get?${searchQuery}`);
+    const data = await res.json();
+    if (data.length > 9) {
+      setShowMore(false);
     }
 
-    fetchListingData()
-
-  },[location.search])
+    setListing([...listing, ...data]);
+  };
 
   const handleSearchForm = (e) => {
-    e.preventDefault()
-    const urlParams = new URLSearchParams()
-    urlParams.set("searchTerm", searchListing.searchTerm)
-    urlParams.set("offer", searchListing.offer)
-    urlParams.set("parking", searchListing.parking)
-    urlParams.set("purnished", searchListing.furnished)
-    urlParams.set("order", searchListing.order)
-    urlParams.set("sort", searchListing.sort)
-    urlParams.set("type", searchListing.type)
-    const searchQuery = urlParams.toString()
-    navigate(`/search?${searchQuery}`)
-  }
+    e.preventDefault();
+    const urlParams = new URLSearchParams();
+    urlParams.set("searchTerm", searchListing.searchTerm);
+    urlParams.set("offer", searchListing.offer);
+    urlParams.set("parking", searchListing.parking);
+    urlParams.set("purnished", searchListing.furnished);
+    urlParams.set("order", searchListing.order);
+    urlParams.set("sort", searchListing.sort);
+    urlParams.set("type", searchListing.type);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
 
   return (
     <main className="flex">
@@ -114,7 +144,7 @@ const Search = () => {
               className="w-full p-3 rounded-lg outline-none"
             />
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
             <label> Type: </label>
             <div className="flex items-center">
               <input
@@ -206,12 +236,17 @@ const Search = () => {
             Listing results:
           </h1>
         </div>
-        { loading && listing.length === 0 && <p>Loading</p>}
+        {loading && listing.length === 0 && <p>Loading</p>}
         <div className="flex gap-3 flex-wrap">
-        { !loading && listing && listing.map((listing) => 
-            <ListingItem key={listing._id} listing={listing} />
-        ) }
+          {!loading &&
+            listing &&
+            listing.map((listing) => (
+              <ListingItem key={listing._id} listing={listing} />
+            ))}
         </div>
+        {showMore && (
+          <button className="text-blue-800 text-center w-full text-xl py-6" onClick={handleShowMoreListing}> Show More </button>
+        )}
       </div>
     </main>
   );

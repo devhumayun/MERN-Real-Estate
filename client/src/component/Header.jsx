@@ -28,7 +28,7 @@ export default function Header() {
   return (
     <>
       <div className='w-full shadow-lg bg-gray-300 bg-opacity-90'>
-        <div className="max-w-[80%] flex justify-between mx-auto items-center py-3">
+        <div className="max-w-7xl flex justify-between mx-auto items-center py-3">
             <div className="flex font-semibold text-xl">
                 <span className="text-slate-600"> Humayun </span>
                 <span className="text-slate-700">Estate </span>
