@@ -161,7 +161,7 @@ const CreateListing = () => {
       </h1>
       <form
         onSubmit={handleListingCreateForm}
-        className="flex flex-col sm:flex-row gap-7"
+        className="flex flex-col sm:flex-row gap-7 bg-gray-200 p-3 shadow-sm rounded-lg"
       >
         <div className="flex flex-col flex-1 gap-6">
           <div className="flex flex-col gap-4">

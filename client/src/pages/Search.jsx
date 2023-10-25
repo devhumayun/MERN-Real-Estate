@@ -5,8 +5,7 @@ import ListingItem from "../component/ListingItem";
 const Search = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [listing, setListing] = useState([]);
-  console.log(listing);
+  const [listing, setListing] = useState([]); 
   const [showMore, setShowMore] = useState(false);
 
   const [searchListing, setSearchListing] = useState({
@@ -130,11 +129,11 @@ const Search = () => {
   };
 
   return (
-    <main className="flex">
+    <main className="flex max-w-full mx-auto">
       <div className="p-7 border-b-2 md:border-r-2 min-h-screen">
-        <form onSubmit={handleSearchForm} className="flex flex-col gap-8">
+        <form onSubmit={handleSearchForm} className="flex flex-col gap-8 bg-gray-200 p-3 rounded-lg shadow-sm">
           <div className="flex items-center gap-2">
-            <label className="whitespace-nowrap"> Search Term: </label>
+            <label className="whitespace-nowrap font-semibold"> Search Term: </label>
             <input
               value={searchListing.searchTerm}
               onChange={handleInputChange}
@@ -145,7 +144,7 @@ const Search = () => {
             />
           </div>
           <div className="flex gap-3 flex-wrap">
-            <label> Type: </label>
+            <label className="font-semibold"> Type: </label>
             <div className="flex items-center">
               <input
                 value={searchListing.type === "all"}
@@ -188,14 +187,14 @@ const Search = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <label> Amenities: </label>
+            <label className="font-semibold"> Amenities: </label>
             <div className="flex items-center gap-2">
               <input
                 value={searchListing.parking}
                 onChange={handleInputChange}
                 type="checkbox"
                 id="parking"
-                className="w-8"
+                className=""
               />
               <span> Parking </span>
             </div>
@@ -211,7 +210,7 @@ const Search = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <label>Sort: </label>
+            <label className="font-semibold">Sort: </label>
             <select
               defaultValue={"created_at_desc"}
               onChange={handleInputChange}
