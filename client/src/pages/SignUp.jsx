@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Oath from "../component/Oath";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function SignUp() {
   const [error, setError] = useState(null);
@@ -11,6 +12,8 @@ export default function SignUp() {
     email: "",
     password: "",
   });
+
+  const [showPass, setShowPass] = useState(false);
 
   // handle input value change
   const handleInputChange = (e) => {
@@ -69,6 +72,8 @@ export default function SignUp() {
               placeholder="email"
               className="p-3 w-full rounded-lg bg-white focus:outline-none"
             />
+            <div className="relative">
+
             <input
               type="text"
               value={input.password}
@@ -77,6 +82,10 @@ export default function SignUp() {
               placeholder="password"
               className="p-3 w-full rounded-lg bg-white focus:outline-none"
             />
+              <span className="absolute top-4 right-4 cursor-pointer text-xl"  onClick={() => setShowPass(!showPass)}>
+              {showPass ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}{" "}
+            </span>
+            </div>
             {error && <p className="text-red-500 py-3">{error}</p>}
             <button
               type="submit"

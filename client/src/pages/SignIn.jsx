@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import {signInStart, signInSuccess, signInFailed} from '../redux//user/userSlice.js'
+import {
+  signInStart,
+  signInSuccess,
+  signInFailed,
+} from "../redux//user/userSlice.js";
 import Oath from "../component/Oath.jsx";
-
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function SignIn() {
-
-  const {error, loading} = useSelector(state => state.user)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const { error, loading } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
+  const [showPass, setShowPass] = useState(false);
 
   // handle input value change
   const handleInputChange = (e) => {
@@ -27,7 +31,7 @@ export default function SignIn() {
   const handleUserSignIn = async (e) => {
     e.preventDefault();
     try {
-      dispatch(signInStart())
+      dispatch(signInStart());
       const res = await fetch("/api/v1/auth/sign-in", {
         method: "POST",
         headers: {
@@ -37,13 +41,13 @@ export default function SignIn() {
       });
       const data = await res.json();
       if (data.success === false) {
-        dispatch(signInFailed(data.message))
+        dispatch(signInFailed(data.message));
         return;
       }
-      dispatch(signInSuccess(data))
-      navigate("/home")
+      dispatch(signInSuccess(data));
+      navigate("/");
     } catch (error) {
-      dispatch(signInFailed(error.message))
+      dispatch(signInFailed(error.message));
     }
   };
 
@@ -61,15 +65,20 @@ export default function SignIn() {
               placeholder="email"
               className="p-3 w-full rounded-lg bg-white focus:outline-none"
             />
-            <input
-              type="text"
-              value={input.password}
-              onChange={(e) => handleInputChange(e)}
-              name="password"
-              placeholder="password"
-              className="p-3 w-full rounded-lg bg-white focus:outline-none"
-            />
-             {error && <p className="text-red-500 py-3">{error}</p>}
+            <div className="relative">
+              <input
+                type={showPass ? "text" : "password"}
+                value={input.password}
+                onChange={(e) => handleInputChange(e)}
+                name="password"
+                placeholder="password"
+                className="p-3 w-full rounded-lg bg-white focus:outline-none relative"
+              />
+            <span className="absolute top-4 right-4 cursor-pointer text-xl"  onClick={() => setShowPass(!showPass)}>
+              {showPass ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}{" "}
+            </span>
+            </div>
+            {error && <p className="text-red-500 py-3">{error}</p>}
             <button
               type="submit"
               disabled={loading}
@@ -91,5 +100,3 @@ export default function SignIn() {
     </div>
   );
 }
-
-
