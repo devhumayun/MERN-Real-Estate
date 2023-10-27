@@ -4,17 +4,18 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import SwiperCore from "swiper";
 import "swiper/css/bundle";
-import Listing from "./Listing";
 import ListingItem from "../component/ListingItem";
 
 export default function Home() {
   const [offerListing, setOfferListing] = useState([]);
   const [rentListing, setRentListing] = useState([]);
   const [saleListing, setSaleListing] = useState([]);
+  const [loading, setLoading] = useState(false)
   SwiperCore.use([Navigation]);
   useEffect(() => {
     const fetchOfferListingData = async () => {
       try {
+        setLoading(true)
         const res = await fetch("/api/v1/listing/get?offer=true&limit=4");
         const data = await res.json();
         setOfferListing(data);
@@ -40,6 +41,7 @@ export default function Home() {
         const res = await fetch("/api/v1/listing/get?type=sale&limit=4");
         const data = await res.json();
         setSaleListing(data);
+        setLoading(false)
       } catch (error) {
         console.log(error);
       }
@@ -51,6 +53,7 @@ export default function Home() {
   return (
     <main className="">
       {/* hero content */}
+
       <div className="py-28 max-w-7xl mx-auto px-6">
         <h1 className="text-4xl lg:text-6xl font-bold text-slate-900">
           {" "}
@@ -64,7 +67,7 @@ export default function Home() {
         </p>
         <Link className="text-blue-900 font-semibold" to={"/search"}>
           {" "}
-          Let's start now ..{" "}
+          Lets start now ..{" "}
         </Link>
       </div>
       {/* slider */}
