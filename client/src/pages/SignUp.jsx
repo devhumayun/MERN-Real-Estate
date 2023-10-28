@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Oath from "../component/Oath";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function SignUp() {
@@ -75,7 +74,7 @@ export default function SignUp() {
             <div className="relative">
 
             <input
-              type="text"
+              type={showPass ? "text" : "password"}
               value={input.password}
               onChange={(e) => handleInputChange(e)}
               name="password"
@@ -94,7 +93,6 @@ export default function SignUp() {
             >
               {loading ? "Loading.." : " Sign Up"}
             </button>
-            <Oath />
           </form>
 
           <p className="mt-5 ">

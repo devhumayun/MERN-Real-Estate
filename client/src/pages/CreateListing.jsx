@@ -31,6 +31,7 @@ const CreateListing = () => {
     offer: false,
     parking: false,
   });
+  console.log(fromData);
   const handleImageUpload = async () => {
     if (files.length > 0 && files.length + fromData.imageUrl.length < 7) {
       setUploading(true);
@@ -277,9 +278,9 @@ const CreateListing = () => {
             <div className="flex items-center gap-2">
               <input
                 type="number"
-                id="selePrice"
+                id="salePrice"
                 min={50}
-                max={10000}
+                max={5000000000}
                 onChange={handleInputChange}
                 value={fromData.salePrice}
                 required
@@ -298,8 +299,7 @@ const CreateListing = () => {
                 <input
                   type="number"
                   id="discountPrice"
-                  min={0}
-                  max={10000}
+                  max={5000000000}
                   onChange={handleInputChange}
                   value={fromData.discountPrice}
                   required

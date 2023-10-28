@@ -6,7 +6,6 @@ import {
   signInSuccess,
   signInFailed,
 } from "../redux//user/userSlice.js";
-import Oath from "../component/Oath.jsx";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function SignIn() {
@@ -86,7 +85,6 @@ export default function SignIn() {
             >
               {loading ? "Loading.." : " Sign Up"}
             </button>
-            <Oath />
           </form>
           <p className="mt-5 ">
             Not Have an account?
