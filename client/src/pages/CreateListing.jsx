@@ -31,7 +31,6 @@ const CreateListing = () => {
     offer: false,
     parking: false,
   });
-  console.log(fromData);
   const handleImageUpload = async () => {
     if (files.length > 0 && files.length + fromData.imageUrl.length < 7) {
       setUploading(true);
